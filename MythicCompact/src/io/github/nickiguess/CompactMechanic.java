@@ -12,15 +12,13 @@ import io.lumine.xikage.mythicmobs.skills.SkillMechanic;
 import io.lumine.xikage.mythicmobs.skills.SkillMetadata;
 
 
-public class CompactMechanic extends SkillMechanic implements ITargetedEntitySkill
-{
+public class CompactMechanic extends SkillMechanic implements ITargetedEntitySkill{
     protected String compactedItem;
     protected String baseItem;
     protected int giveAmount;
     protected int removeAmount;
     
-    public CompactMechanic(MythicLineConfig config) 
-    {
+    public CompactMechanic(MythicLineConfig config) {
         super(config.getLine(), config);
         this.setAsyncSafe(false);
         this.setTargetsCreativePlayers(false);
@@ -32,94 +30,74 @@ public class CompactMechanic extends SkillMechanic implements ITargetedEntitySki
         
     }
     
-    public void CompactMechanicCast(Player player, ItemStack[] materialList, ItemStack baseItemStack, ItemStack compactedItemStack) 
-    {
+    public void compactMechanicCast(Player player, ItemStack[] materialList, ItemStack baseItemStack, ItemStack compactedItemStack) {
 		Material cM;
 		
-		{
-			if (removeAmount < giveAmount) 
-			{
-				int isEmpty = player.getInventory().firstEmpty();
-				for (int i = 0; i < 36; i++) 
-				{
-					if (isEmpty == -1) 
-					{
+		if (removeAmount < giveAmount) {
+
+			int isEmpty = player.getInventory().firstEmpty();
+			for (int i = 0; i < 36; i++) {
+				if (isEmpty == -1) {
+					break;
+				}
+				if (materialList[i] == null) {
+					continue;
+				}
+				cM = materialList[i].getType();
+				
+				while (cM == baseItemStack.getType()){
+					if (isEmpty == -1) {
 						break;
 					}
-					if (materialList[i] == null) 
-					{
-						continue;
+					if (materialList[i].getAmount() >= removeAmount) {
+						player.getInventory().removeItem(baseItemStack);
+						player.getInventory().addItem(compactedItemStack);
+					} else {
+						break;
 					}
-					cM = materialList[i].getType();
+
+					materialList = player.getInventory().getContents();
 					
-					while (cM == baseItemStack.getType())
-					{
-						if (isEmpty == -1) 
-						{
-							break;
-						}
-						if (materialList[i].getAmount() >= removeAmount) 
-						{
-							player.getInventory().removeItem(baseItemStack);
-							player.getInventory().addItem(compactedItemStack);
-						} else 
-						{
-							break;
-						}
-
-						materialList = player.getInventory().getContents();
-						
-						if (materialList[i] == null) 
-						{
-							break;
-						}
-
-						cM = materialList[i].getType();
-						isEmpty = player.getInventory().firstEmpty();
+					if (materialList[i] == null) {
+						break;
 					}
+
+					cM = materialList[i].getType();
 					isEmpty = player.getInventory().firstEmpty();
 				}
-			} else 
-			{
-				for (int i = 0; i < 36; i++) 
-				{
-					if (materialList[i] == null) 
-					{
-						continue;
+				isEmpty = player.getInventory().firstEmpty();
+			}
+		} else {
+			for (int i = 0; i < 36; i++) {
+				if (materialList[i] == null) {
+					continue;
+				}
+				cM = materialList[i].getType();
+				
+				while (cM == baseItemStack.getType()) {
+					if (materialList[i].getAmount() >= removeAmount) {
+						player.getInventory().removeItem(baseItemStack);
+						player.getInventory().addItem(compactedItemStack);
+					} else {
+						break;
 					}
-					cM = materialList[i].getType();
+
+					materialList = player.getInventory().getContents();
 					
-					while (cM == baseItemStack.getType())
-					{
-						if (materialList[i].getAmount() >= removeAmount) 
-						{
-							player.getInventory().removeItem(baseItemStack);
-							player.getInventory().addItem(compactedItemStack);
-						} else 
-						{
-							break;
-						}
-
-						materialList = player.getInventory().getContents();
-						
-						if (materialList[i] == null) 
-						{
-							break;
-						}
-
-						cM = materialList[i].getType();
+					if (materialList[i] == null) {
+						break;
 					}
+
+					cM = materialList[i].getType();
 				}
 			}
-		} 
+		}
     }
     
     @Override
-    public boolean castAtEntity(SkillMetadata data, AbstractEntity target) 
-    {
+    public boolean castAtEntity(SkillMetadata data, AbstractEntity target) {
 		
-    	if (target.isPlayer() == true) 
-    	{
+    	if (target.isPlayer() == true) {
     		Player player = (Player) target.getBukkitEntity();
     		
     		ItemStack baseItemStack = new ItemStack(MythicMobs.inst().getItemManager().getItemStack(baseItem));
@@ -129,9 +107,8 @@ public class CompactMechanic extends SkillMechanic implements ITargetedEntitySki
 
 			ItemStack[] materialList = player.getInventory().getContents();
 
-			if (player.getInventory().containsAtLeast(baseItemStack, removeAmount)) 
-			{
-				CompactMechanicCast(player, materialList, baseItemStack, compactedItemStack);
+			if (player.getInventory().containsAtLeast(baseItemStack, removeAmount)) {
+				compactMechanicCast(player, materialList, baseItemStack, compactedItemStack);
 			}
     	}
 		return false;
