@@ -32,82 +32,82 @@ public class CompactMechanic extends SkillMechanic implements ITargetedEntitySki
         
     }
     
-    public void CompactMechanicCast(Player p, ItemStack[] mL, ItemStack bIS, ItemStack cIS) 
+    public void CompactMechanicCast(Player player, ItemStack[] materialList, ItemStack baseItemStack, ItemStack compactedItemStack) 
     {
 		Material cM;
 		
 		{
 			if (removeAmount < giveAmount) 
 			{
-				int isEmpty = p.getInventory().firstEmpty();
+				int isEmpty = player.getInventory().firstEmpty();
 				for (int i = 0; i < 36; i++) 
 				{
 					if (isEmpty == -1) 
 					{
 						break;
 					}
-					if (mL[i] == null) 
+					if (materialList[i] == null) 
 					{
 						continue;
 					}
-					cM = mL[i].getType();
+					cM = materialList[i].getType();
 					
-					while (cM == bIS.getType())
+					while (cM == baseItemStack.getType())
 					{
 						if (isEmpty == -1) 
 						{
 							break;
 						}
-						if (mL[i].getAmount() >= removeAmount) 
+						if (materialList[i].getAmount() >= removeAmount) 
 						{
-							p.getInventory().removeItem(bIS);
-			    			p.getInventory().addItem(cIS);
+							player.getInventory().removeItem(baseItemStack);
+							player.getInventory().addItem(compactedItemStack);
 						} else 
 						{
 							break;
 						}
 
-						mL = p.getInventory().getContents();
+						materialList = player.getInventory().getContents();
 						
-						if (mL[i] == null) 
+						if (materialList[i] == null) 
 						{
 							break;
 						}
 
-						cM = mL[i].getType();
-						isEmpty = p.getInventory().firstEmpty();
+						cM = materialList[i].getType();
+						isEmpty = player.getInventory().firstEmpty();
 					}
-					isEmpty = p.getInventory().firstEmpty();
+					isEmpty = player.getInventory().firstEmpty();
 				}
 			} else 
 			{
 				for (int i = 0; i < 36; i++) 
 				{
-					if (mL[i] == null) 
+					if (materialList[i] == null) 
 					{
 						continue;
 					}
-					cM = mL[i].getType();
+					cM = materialList[i].getType();
 					
-					while (cM == bIS.getType())
+					while (cM == baseItemStack.getType())
 					{
-						if (mL[i].getAmount() >= removeAmount) 
+						if (materialList[i].getAmount() >= removeAmount) 
 						{
-							p.getInventory().removeItem(bIS);
-			    			p.getInventory().addItem(cIS);
+							player.getInventory().removeItem(baseItemStack);
+							player.getInventory().addItem(compactedItemStack);
 						} else 
 						{
 							break;
 						}
 
-						mL = p.getInventory().getContents();
+						materialList = player.getInventory().getContents();
 						
-						if (mL[i] == null) 
+						if (materialList[i] == null) 
 						{
 							break;
 						}
 
-						cM = mL[i].getType();
+						cM = materialList[i].getType();
 					}
 				}
 			}
